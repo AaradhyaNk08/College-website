@@ -103,5 +103,17 @@
     <p>© 2026 St.Jude's College of Science and Commerce | All Rights Reserved</p>
 </footer>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const SUPABASE_URL = "https://igumflcgfealhfdnoxog.supabase.co/rest/v1/";
+  const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_pbD-8JZzTY-tb16vkx-9Gg_1tZElkZh";
+
+  const supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_PUBLISHABLE_KEY
+  );
+</script>
+
+
 </body>
 </html>
