@@ -1,8 +1,13 @@
+
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Contact Us - St.Jude's College of Science and Commerce College</title>
+
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -26,9 +31,10 @@
 <section class="content">
 
     <h2>Reach Out to Us</h2>
+
     <p>
-        Have questions about admissions, courses, or campus life? Fill out the form 
-        below or reach out using our official contact details.
+        Have questions about admissions, courses, or campus life?
+        Fill out the form below or reach out using our official contact details.
     </p>
 
     <div class="cards" style="padding: 20px 0;">
@@ -36,10 +42,10 @@
         <div class="card">
             <h3>Address</h3>
             <p>
-                 St. Jude's College of Science & Commerce,
-                 Tatya Gharpure Marg, Charni Road (E),
-                 Mumbai - 400004            
-           </p>
+                St. Jude's College of Science &amp; Commerce,
+                Tatya Gharpure Marg, Charni Road (E),
+                Mumbai - 400004
+            </p>
         </div>
 
         <div class="card">
@@ -62,29 +68,127 @@
 
     <h2>Send Us a Message</h2>
 
-    <form class="contact-form" action="#" method="post">
-        
+    <form class="contact-form" id="contact-form">
+
         <label for="name">Full Name</label>
-        <input type="text" id="name" name="name" placeholder="Enter your full name" required>
+        <input
+            type="text"
+            id="name"
+            name="name"
+            placeholder="Enter your full name"
+            required
+        >
 
         <label for="email">Email Address</label>
-        <input type="email" id="email" name="email" placeholder="Enter your email address" required>
+        <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="Enter your email address"
+            required
+        >
 
         <label for="subject">Subject</label>
-        <input type="text" id="subject" name="subject" placeholder="Reason for contacting">
+        <input
+            type="text"
+            id="subject"
+            name="subject"
+            placeholder="Reason for contacting"
+        >
 
         <label for="message">Message</label>
-        <textarea id="message" name="message" rows="5" placeholder="Write your message here..." required></textarea>
+        <textarea
+            id="message"
+            name="message"
+            rows="5"
+            placeholder="Write your message here..."
+            required
+        ></textarea>
 
-        <button type="submit" class="button">Submit Message</button>
+        <button type="submit" class="button">
+            Submit Message
+        </button>
+
+        <p id="form-status" role="status"></p>
 
     </form>
 
 </section>
 
 <footer>
-    <p>© 2026 St.Jude's College of Science and Commerce | All Rights Reserved</p>
+    <p>
+        © 2026 St.Jude's College of Science and Commerce |
+        All Rights Reserved
+    </p>
 </footer>
+
+<!-- Supabase library -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<!-- Supabase connection and form submission -->
+<script>
+    const SUPABASE_URL = "YOUR_SUPABASE_PROJECT_URL";
+    const SUPABASE_PUBLISHABLE_KEY = "YOUR_SUPABASE_PUBLISHABLE_KEY";
+
+    const supabaseClient = window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_PUBLISHABLE_KEY
+    );
+
+    const form = document.getElementById("contact-form");
+    const status = document.getElementById("form-status");
+    const submitButton = form.querySelector('button[type="submit"]');
+
+    form.addEventListener("submit", async function (event) {
+        event.preventDefault();
+
+        const name = document.getElementById("name").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const subject = document.getElementById("subject").value.trim();
+        const message = document.getElementById("message").value.trim();
+
+        if (!name || !email || !message) {
+            status.textContent = "Please fill in all required fields.";
+            return;
+        }
+
+        submitButton.disabled = true;
+        status.textContent = "Sending your message...";
+
+        try {
+            const { error } = await supabaseClient
+                .from("contact_messages")
+                .insert([
+                    {
+                        name: name,
+                        email: email,
+                        message: subject
+                            ? "Subject: " + subject + "\n\n" + message
+                            : message
+                    }
+                ]);
+
+            if (error) {
+                console.error("Supabase error:", error);
+                status.textContent =
+                    "Message could not be sent. Please try again.";
+                return;
+            }
+
+            status.textContent =
+                "Your message was sent successfully!";
+
+            form.reset();
+
+        } catch (error) {
+            console.error("Submission error:", error);
+            status.textContent =
+                "Something went wrong. Please try again.";
+        } finally {
+            submitButton.disabled = false;
+        }
+    });
+</script>
 
 </body>
 </html>
