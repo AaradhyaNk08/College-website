@@ -170,7 +170,7 @@
                 .select();
 
             if (error) {
-                console.error("Supabase error:", error);
+                console.error("Supabase error details:", JSON.stringify(error, null, 2));
                 status.textContent =
                     "Error " + error.code + ": " + error.message;
                 return;
