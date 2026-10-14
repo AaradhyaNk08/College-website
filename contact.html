@@ -167,7 +167,6 @@
                         ? "Subject: " + subject + "\n\n" + message
                         : message
                 }])
-                .select();
 
             if (error) {
                 console.error("Supabase error details:", JSON.stringify(error, null, 2));
