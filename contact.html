@@ -75,6 +75,7 @@
             type="text"
             id="name"
             name="name"
+            autocomplete="name"
             placeholder="Enter your full name"
             required
         >
@@ -84,6 +85,7 @@
             type="email"
             id="email"
             name="email"
+            autocomplete="email"
             placeholder="Enter your email address"
             required
         >
@@ -93,6 +95,7 @@
             type="text"
             id="subject"
             name="subject"
+            autocomplete="off"
             placeholder="Reason for contacting"
         >
 
@@ -109,7 +112,7 @@
             Submit Message
         </button>
 
-        <p id="form-status" role="status"></p>
+        <p id="form-status" role="status" aria-live="polite"></p>
 
     </form>
 
@@ -122,11 +125,10 @@
     </p>
 </footer>
 
-<!-- Supabase library -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<!-- Supabase connection and form submission -->
 <script>
+    // Replace these with your real Supabase project values.
     const SUPABASE_URL = "https://igumflcgfealhfdnoxog.supabase.co/rest/v1/";
     const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_pbD-8JZzTY-tb16vkx-9Gg_1tZElkZh";
 
@@ -156,34 +158,31 @@
         status.textContent = "Sending your message...";
 
         try {
-            const { error } = await supabaseClient
+            const { data, error } = await supabaseClient
                 .from("contact_messages")
-                .insert([
-                    {
-                        name: name,
-                        email: email,
-                        message: subject
-                            ? "Subject: " + subject + "\n\n" + message
-                            : message
-                    }
-                ]);
+                .insert([{
+                    name: name,
+                    email: email,
+                    message: subject
+                        ? "Subject: " + subject + "\n\n" + message
+                        : message
+                }])
+                .select();
 
             if (error) {
                 console.error("Supabase error:", error);
                 status.textContent =
-                    "Message could not be sent. Please try again.";
+                    "Error " + error.code + ": " + error.message;
                 return;
             }
 
-            status.textContent =
-                "Your message was sent successfully!";
-
+            status.textContent = "Your message was sent successfully!";
             form.reset();
 
         } catch (error) {
             console.error("Submission error:", error);
             status.textContent =
-                "Something went wrong. Please try again.";
+                "Connection error. Please check your internet and try again.";
         } finally {
             submitButton.disabled = false;
         }
